@@ -80,3 +80,63 @@ var placeholderFix = function() {
 
 })(jQuery);
 */
+
+    (function($) {
+        $(function() {
+            if(!('placeholder' in document.createElement("input"))) { //don't do any work if we don't have to!
+                var inputs = $('input[type="text"][placeholder]');
+                var origColour = inputs.eq(0).css("color");
+
+                inputs
+                    .each(function(i) {
+                        var $t = $(this);
+                        if($t.val()===''){
+                            $t.val($t.attr("placeholder")).css("color", "#585858");
+                        }
+                    })
+                    .focus(function() {
+                        var $t = $(this);
+                        if( $t.val() === $t.attr("placeholder")) $t.val('').css("color", origColour);
+                    })
+                    .blur(function() {
+                        var $t = $(this);
+                        if($t.val() === '') {
+                            $t.val($t.attr("placeholder")).css("color", "#585858");
+                        }
+                    });
+                   
+                //now password fields   
+                var $password_fields = $('input[type="password"][placeholder]');
+                origColour = $password_fields.eq(0).css("color");
+
+                $password_fields
+                    .each(function(i) {
+                        var $t = $(this);
+                        
+                        $copy = $('<input type="text">')
+                            .val($t.attr("placeholder"))
+                            .css("color", "#585858")
+                            .hide()
+                            .focus(function(){
+                                $copy.hide();
+                                $t.show().focus();
+                            });
+                        $t.after($copy);
+                        $t.data('placeholder',$copy);
+                        if($t.val()===''){
+                            $t.hide();
+                            $copy.show();
+                        }
+                    })
+                    .blur(function() {
+                        var $t = $(this);
+                        if($t.val() === '') {
+                            $copy = $t.data('placeholder');
+                            $copy.show();
+                            $t.hide();
+                        }
+                    });
+            }
+        })
+
+    })(jQuery);
